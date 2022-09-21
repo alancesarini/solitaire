@@ -1,7 +1,11 @@
 .solitaire {
     display: flex;
     flex-direction: column;
-    max-width: 50vw;
+    max-width: 80vw;
+    background-color: #2d5a5b;
+    padding: 6rem;
+    margin-top: 4rem;
+    border-radius: 10px;
 }
 
 .solitaire__top {
@@ -39,8 +43,7 @@
 
 .stock {
     display: flex;
-    margin-top: 0.5rem;
-    margin-left: 4rem;
+    margin: 0.5rem 0.75rem 0 4rem;
 }
 
 .stock__card {
@@ -79,7 +82,7 @@
 }
 
 .waste .pile {
-    margin: 5rem 1.5rem 0 0.5rem;
+    margin: 5rem 0.75rem 0.75rem 0.5rem;
 }
 
 .pile .slot__empty {
