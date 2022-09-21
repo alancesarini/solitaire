@@ -13,7 +13,9 @@ const Solitaire = (): JSX.Element => {
 	const WASTE_PILES = 7;
 	const FOUNDATION_PILES = 4;
 
-	useEffect(() => {
+	useEffect(() => {}, []);
+
+	const newGameClickHandler = (): void => {
 		const newDeck: CardType[] = [];
 		VALUES.forEach((value) => {
 			SUITS.forEach((suit) => {
@@ -39,7 +41,9 @@ const Solitaire = (): JSX.Element => {
 		}
 		setWaste(newWaste);
 		setStock(newDeck);
-	}, []);
+		setFoundations([[], [], [], []]);
+		setStockIndex(-1);
+	};
 
 	const shuffleDeck = (deck: CardType[]): void => {
 		for (let i = deck.length - 1; i > 0; i--) {
@@ -250,7 +254,7 @@ const Solitaire = (): JSX.Element => {
 						} else {
 							return (
 								<div className={styles.pile} key={index}>
-									<div className={styles.slot}></div>
+									<div className={styles.slot__empty}></div>
 								</div>
 							);
 						}
@@ -270,6 +274,11 @@ const Solitaire = (): JSX.Element => {
 						</div>
 					))}
 				</div>
+			</div>
+			<div className={styles.solitaire__footer}>
+				<button className={styles.button} onClick={newGameClickHandler}>
+					New game
+				</button>
 			</div>
 		</div>
 	);
