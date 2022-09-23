@@ -1,11 +1,16 @@
 .solitaire {
+    position: relative;
     display: flex;
     flex-direction: column;
     max-width: 80vw;
     background-color: #2d5a5b;
-    padding: 6rem;
+    padding: 4rem 6rem;
     margin-top: 4rem;
     border-radius: 10px;
+}
+
+.solitaire__header h3 {
+    color: #fff;
 }
 
 .solitaire__top {
@@ -96,4 +101,24 @@
 
 .foundations .pile .slot {
     margin-right: 1rem;
+}
+
+.game__finished {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #2d5a5b;
+    z-index: 1;
+    border-radius: 10px;
+
+}
+
+.game__finished p {
+    color: #fff;
+    font-size: 4rem;
 }

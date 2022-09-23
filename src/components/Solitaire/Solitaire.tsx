@@ -7,15 +7,32 @@ const Solitaire = (): JSX.Element => {
 	const [stockIndex, setStockIndex] = useState<number>(-1);
 	const [waste, setWaste] = useState<CardType[][]>([]);
 	const [foundations, setFoundations] = useState<CardType[][]>([[], [], [], []]);
+	const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
+	const [numberOfMoves, setNumberOfMoves] = useState<number>(0);
 
 	const VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 	const SUITS = Array.from(Array(4).keys());
 	const WASTE_PILES = 7;
 	const FOUNDATION_PILES = 4;
 
-	useEffect(() => {}, []);
+	useEffect(() => {
+		let isWasteEmpty = true;
+		for (let i = 0; i < waste.length; i++) {
+			if (waste[i].length > 0) {
+				isWasteEmpty = false;
+				break;
+			}
+		}
+		if (isWasteEmpty && numberOfMoves > 0) {
+			setIsGameFinished(true);
+		}
+	}, [waste]);
 
 	const newGameClickHandler = (): void => {
+		resetGame();
+	};
+
+	const resetGame = (): void => {
 		const newDeck: CardType[] = [];
 		VALUES.forEach((value) => {
 			SUITS.forEach((suit) => {
@@ -43,6 +60,7 @@ const Solitaire = (): JSX.Element => {
 		setStock(newDeck);
 		setFoundations([[], [], [], []]);
 		setStockIndex(-1);
+		setIsGameFinished(false);
 	};
 
 	const shuffleDeck = (deck: CardType[]): void => {
@@ -60,6 +78,7 @@ const Solitaire = (): JSX.Element => {
 		} else {
 			setStockIndex(-1);
 		}
+		setNumberOfMoves(numberOfMoves + 1);
 	};
 
 	const visibleStockClickHandler = (): void => {
@@ -170,6 +189,7 @@ const Solitaire = (): JSX.Element => {
 			if (stockIndex > 0) {
 				setStockIndex(stockIndex - 1);
 			}
+			setNumberOfMoves(numberOfMoves + 1);
 		}
 	};
 
@@ -185,6 +205,7 @@ const Solitaire = (): JSX.Element => {
 			if (stockIndex > 0) {
 				setStockIndex(stockIndex - 1);
 			}
+			setNumberOfMoves(numberOfMoves + 1);
 		}
 	};
 
@@ -197,6 +218,7 @@ const Solitaire = (): JSX.Element => {
 			const newFoundations = [...foundations];
 			newFoundations[pileIndex].pop();
 			setFoundations(newFoundations);
+			setNumberOfMoves(numberOfMoves + 1);
 		}
 	};
 
@@ -211,6 +233,7 @@ const Solitaire = (): JSX.Element => {
 				newWaste[wastePileIndex][newWaste[wastePileIndex].length - 1].visible = true;
 			}
 			setWaste(newWaste);
+			setNumberOfMoves(numberOfMoves + 1);
 		}
 	};
 
@@ -225,6 +248,7 @@ const Solitaire = (): JSX.Element => {
 				}
 			});
 			setWaste(newWaste);
+			setNumberOfMoves(numberOfMoves + 1);
 		}
 	};
 
@@ -238,48 +262,73 @@ const Solitaire = (): JSX.Element => {
 		);
 	};
 
+	const renderNewGameButton = (): JSX.Element => {
+		return (
+			<button className={styles.button} onClick={newGameClickHandler}>
+				New game
+			</button>
+		);
+	};
+
+	const renderWinnerScreen = (): JSX.Element => {
+		return (
+			<div className={styles.game__finished}>
+				<p>Winner!</p>
+				<p>{renderNewGameButton()}</p>
+			</div>
+		);
+	};
+
+	const renderSolitaireBoard = (): JSX.Element => {
+		return (
+			<>
+				<div className={styles.solitaire__header}>
+					<h3>Number of moves: {numberOfMoves}</h3>
+				</div>
+				<div className={styles.solitaire__top}>
+					<div className={styles.foundations}>
+						{foundations.map((pile, index) => {
+							if (pile.length) {
+								return (
+									<div className={styles.pile} key={index}>
+										<div className={styles.slot__empty}>
+											<Card key={index} {...pile[pile.length - 1]} visible={true} position={CardPosition.FOUNDATION} onClick={() => foundationClickHandler(index)} />
+										</div>
+									</div>
+								);
+							} else {
+								return (
+									<div className={styles.pile} key={index}>
+										<div className={styles.slot__empty}></div>
+									</div>
+								);
+							}
+						})}
+					</div>
+					<div className={styles.stock}>
+						{renderVisibleStock()}
+						<div className={styles.slot} onClick={hiddenStockClickHandler}></div>
+					</div>
+				</div>
+				<div className={styles.solitaire__bottom}>
+					<div className={styles.waste}>
+						{waste.map((pile, pileIndex) => (
+							<div className={styles.pile} key={pileIndex}>
+								{!!pile.length && pile.map((card, cardIndex) => <Card key={cardIndex} {...card} position={CardPosition.WASTE} onClick={() => wasteClickHandler(pileIndex, cardIndex)} />)}
+								{!pile.length && <div className={styles.slot__empty} key={pileIndex}></div>}
+							</div>
+						))}
+					</div>
+				</div>
+				<div className={styles.solitaire__footer}>{renderNewGameButton()}</div>
+			</>
+		);
+	};
+
 	return (
 		<div className={styles.solitaire}>
-			<div className={styles.solitaire__top}>
-				<div className={styles.foundations}>
-					{foundations.map((pile, index) => {
-						if (pile.length) {
-							return (
-								<div className={styles.pile} key={index}>
-									<div className={styles.slot__empty}>
-										<Card key={index} {...pile[pile.length - 1]} visible={true} position={CardPosition.FOUNDATION} onClick={() => foundationClickHandler(index)} />
-									</div>
-								</div>
-							);
-						} else {
-							return (
-								<div className={styles.pile} key={index}>
-									<div className={styles.slot__empty}></div>
-								</div>
-							);
-						}
-					})}
-				</div>
-				<div className={styles.stock}>
-					{renderVisibleStock()}
-					<div className={styles.slot} onClick={hiddenStockClickHandler}></div>
-				</div>
-			</div>
-			<div className={styles.solitaire__bottom}>
-				<div className={styles.waste}>
-					{waste.map((pile, pileIndex) => (
-						<div className={styles.pile} key={pileIndex}>
-							{!!pile.length && pile.map((card, cardIndex) => <Card key={cardIndex} {...card} position={CardPosition.WASTE} onClick={() => wasteClickHandler(pileIndex, cardIndex)} />)}
-							{!pile.length && <div className={styles.slot__empty} key={pileIndex}></div>}
-						</div>
-					))}
-				</div>
-			</div>
-			<div className={styles.solitaire__footer}>
-				<button className={styles.button} onClick={newGameClickHandler}>
-					New game
-				</button>
-			</div>
+			{!isGameFinished && renderSolitaireBoard()}
+			{isGameFinished && renderWinnerScreen()}
 		</div>
 	);
 };
